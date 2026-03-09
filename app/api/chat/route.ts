@@ -6,8 +6,9 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
   //send the message to ai and get the result
   const result = streamText({
-    model: google("gemini-3-flash-preview"),
+    model: google("gemini-2.5-flash"),
     messages: await convertToModelMessages(messages),
+    system: `Format your response in markdown with clear sections and formatting.`,
   });
   //convert the result to UI message and return
   return result.toUIMessageStreamResponse();

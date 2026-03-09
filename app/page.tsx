@@ -3,6 +3,7 @@
 import { ArrowBigUp } from "lucide-react";
 import { useState } from "react";
 import { useChat } from "@ai-sdk/react";
+import Markdown from "react-markdown";
 
 export default function Chat() {
   const [input, setInput] = useState("");
@@ -12,54 +13,81 @@ export default function Chat() {
     e.preventDefault();
     //send to ai
     sendMessage({ text: input });
-
     setInput("");
   };
 
   return (
     // message display
-    <div className="flex flex-col items-center justify-between p-3.5 h-screen">
-      <div className="sm:mr-auto sm:mt-0.5 sm:ml-1">
-        <h1 className="text-2xl font-semibold sm:font-medium text-stone-900">
+    <div className="py-2 h-screen flex flex-col items-center">
+      <header className="w-full mt-1 border-b border-gray-200 sm:border-none">
+        <h1 className="text-center mx-auto text-2xl font-semibold sm:font-medium text-stone-900 sm:text-left sm:ml-2">
           Chat to Gemini
         </h1>
-      </div>
-      <div>
-        {/* <p>this is message</p> */}
+      </header>
+      {/* message */}
+
+      <section className="overflow-y-auto flex-1 px-4 py-2 w-full ">
         {messages.map((message) => (
-          <div key={message.id}>
-            {message.role === "user" ? "user" : "ai"}
+          <div className="mx-auto sm:max-w-3xl" key={message.id}>
             {message.parts.map((part, i) => {
               switch (part.type) {
                 case "text":
-                  return <div key={`${message.id}-${i}`}>{part.text}</div>;
+                  return (
+                    <div
+                      key={`${message.id}-${i}`}
+                      className={`${
+                        message.role === "user"
+                          ? "bg-gray-200 ml-auto mr-4 rounded-xl mb-2 w-fit max-w-5/6 sm:mr-5"
+                          : "max-w-[98%] mx-auto"
+                      } p-2.5 mt-12`}
+                    >
+                      {message.role === "user" ? (
+                        <p className="font-semibold text-2xl">You</p>
+                      ) : (
+                        <p className="font-semibold text-2xl">Assistant</p>
+                      )}
+                      {
+                        <div className="prose max-w-full">
+                          <Markdown>{part.text}</Markdown>
+                        </div>
+                      }
+                    </div>
+                  );
               }
             })}
           </div>
         ))}
-      </div>
+      </section>
+
       {/* input box */}
-      <form
-        onSubmit={(e) => handleSubmit(e)}
-        className="flex items-center gap-4 w-full p-1.5 bg-slate-200 rounded-3xl border-2 border-slate-200 shadow-sm max-w-3xl sm:bg-zinc-200 sm:rounded-2xl sm:border-gray-300 sm:mb-5"
-      >
-        <textarea
-          className="grow pl-1 focus:outline-0 text-left max-h-44 resize-none overflow-y-auto p-0.5"
-          placeholder="Ask Gemini 🦜"
-          rows={1}
-          onInput={(e) => {
-            // reset the height
-            e.currentTarget.style.height = "auto";
-            // reset scroll height
-            e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
-            setInput(e.currentTarget.value);
-          }}
-          value={input}
-        />
-        <button className="cursor-pointer rounded-full p-1.5 bg-black text-white mt-auto">
-          <ArrowBigUp strokeWidth={1.5} />
-        </button>
-      </form>
+      <section className="px-2 w-full max-w-3xl">
+        <form
+          onSubmit={(e) => handleSubmit(e)}
+          className="flex items-center gap-4 mx-auto mb-2 mt-2 p-1.5 bg-slate-200 rounded-3xl border-2 border-slate-200 shadow-sm  sm:bg-zinc-200 sm:rounded-2xl sm:border-gray-300 sm:mb-6 sm:mt-0"
+        >
+          <textarea
+            className="grow pl-1 focus:outline-0 text-left max-h-44 resize-none overflow-y-auto p-0.5"
+            placeholder="Ask Gemini 🦜"
+            rows={1}
+            onInput={(e) => {
+              // reset the height
+              e.currentTarget.style.height = "auto";
+              // reset scroll height
+              e.currentTarget.style.height =
+                e.currentTarget.scrollHeight + "px";
+              setInput(e.currentTarget.value);
+            }}
+            value={input}
+          />
+          <button
+            disabled={!input.trim()}
+            className={`rounded-full p-1.5 bg-black text-white mt-auto
+            ${!input.trim() ? "bg-slate-300 cursor-not-allowed" : "cursor-pointer"}`}
+          >
+            <ArrowBigUp strokeWidth={1.5} />
+          </button>
+        </form>
+      </section>
     </div>
   );
 }
