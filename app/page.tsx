@@ -1,13 +1,22 @@
 "use client";
 
 import { ArrowBigUp } from "lucide-react";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import Markdown from "react-markdown";
 
 export default function Chat() {
   const [input, setInput] = useState("");
   const { messages, sendMessage } = useChat();
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  useLayoutEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "auto";
+      textAreaRef.current.style.height =
+        textAreaRef.current.scrollHeight + "px";
+    }
+  }, [input]);
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,15 +78,9 @@ export default function Chat() {
             className="grow pl-1 focus:outline-0 text-left max-h-44 resize-none overflow-y-auto p-0.5"
             placeholder="Ask Gemini 🦜"
             rows={1}
-            onInput={(e) => {
-              // reset the height
-              e.currentTarget.style.height = "auto";
-              // reset scroll height
-              e.currentTarget.style.height =
-                e.currentTarget.scrollHeight + "px";
-              setInput(e.currentTarget.value);
-            }}
+            onInput={(e) => setInput(e.currentTarget.value)}
             value={input}
+            ref={textAreaRef}
           />
           <button
             disabled={!input.trim()}
