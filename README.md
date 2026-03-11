@@ -6,7 +6,9 @@ The app is built with:
 - Tavily AI SDK
 - Radix UI, shadcn/ui, and Tailwind CSS for responsive UI development
 
-Currently, this project uses Gemini for model responses and Tavily for web search.
+Currently, this project uses Gemini for model responses and Tavily for web search. It implemented responsive UI design, supporting both mobile and desktop.
+
+<img src="public/screenshot.png" alt="App Screenshot" height=500/>
 
 ## Getting Started
 
